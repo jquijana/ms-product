@@ -11,40 +11,49 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @AllArgsConstructor
 public class ProductService implements IProductService {
 
-  private final ProductRepository productRepository;
-  private final ProductMapper productMapper;
+    private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
 
-  @Override
-  public Mono<ProductDTO> getById(String id) {
-    return productRepository.findById(id).map(x -> productMapper.toProductDTO(x));
-  }
-
-  @Override
-  public Flux<ProductDTO> search(SearchDTO searchShopDTO) {
-    Flux<Product> shopFlux = null;
-
-    if (searchShopDTO.getShopId() != null) {
-      shopFlux =
-          productRepository.findAllByIsActiveAndShopId(
-              searchShopDTO.getIsActive(), searchShopDTO.getShopId());
+    @Override
+    public Mono<ProductDTO> getById(String id) {
+        return productRepository.findById(id).map(x -> productMapper.toProductDTO(x));
     }
 
-    return shopFlux.map(x -> productMapper.toProductDTO(x));
-  }
+    @Override
+    public Flux<ProductDTO> search(SearchDTO searchShopDTO) {
+        Flux<Product> shopFlux = null;
 
-  @Override
-  public Mono<ProductDTO> save(ProductDTO shopDTO) {
-    Mono<Product> shopMono = productRepository.save(productMapper.toProduct(shopDTO));
-    return shopMono.map(x -> productMapper.toProductDTO(x));
-  }
+        if (searchShopDTO.getShopId() != null) {
+            shopFlux =
+                    productRepository.findAllByIsActiveAndShopId(
+                            searchShopDTO.getIsActive(), searchShopDTO.getShopId());
+        }
 
-  @Override
-  public Mono<Void> deleteById(String id) {
-    return productRepository.deleteById(id);
-  }
+        return shopFlux.map(x -> productMapper.toProductDTO(x));
+    }
+
+    @Override
+    public Mono<ProductDTO> save(ProductDTO shopDTO) {
+        Mono<Product> shopMono = productRepository.save(productMapper.toProduct(shopDTO));
+        return shopMono.map(x -> productMapper.toProductDTO(x));
+    }
+
+    @Override
+    public Mono<Void> deleteById(String id) {
+        return productRepository.deleteById(id);
+    }
+
+    @Override
+    public Flux<ProductDTO> saveAll(List<ProductDTO> products) {
+        Flux<Product> categoryFlux = productRepository.saveAll(products.stream().map(x -> productMapper.toProduct(x)).collect(Collectors.toList()));
+        return categoryFlux.map(x -> productMapper.toProductDTO(x));
+    }
 }

@@ -48,7 +48,7 @@ jobs:
         run: |
           gcloud run deploy ms-product \
           --region us-east1 \
-          --image gcr.io/${{ secrets.GCP_ID }}/ms-shop \
+          --image gcr.io/${{ secrets.GCP_ID }}/ms-product \
           --platform managed \
           --allow-unauthenticated \
           --project ${{ secrets.GCP_ID }}

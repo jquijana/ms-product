@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/products")
@@ -28,6 +30,11 @@ public class ProductController {
   @PostMapping
   private Mono<ProductDTO> save(@RequestBody ProductDTO shopDTO) {
     return productService.save(shopDTO);
+  }
+
+  @PostMapping("/saveAll")
+  private Flux<ProductDTO> saveAll(@RequestBody List<ProductDTO> products) {
+    return productService.saveAll(products);
   }
 
   @DeleteMapping("/{id}")
